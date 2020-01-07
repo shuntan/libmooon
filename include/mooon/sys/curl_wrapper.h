@@ -26,6 +26,20 @@ private:
     void* _post;
 };
 
+struct CA
+{
+    std::string ca_path;
+    std::string ca_info;
+    std::string cert;
+    std::string cert_password;
+    std::string cert_type;
+    std::string key;
+    std::string key_password;
+    std::string key_type;
+
+    CA() {}
+};
+
 // libcurl包装类
 // 如果需要访问https，则在编译curl时需要指定configure的参数--with-ssl的值，值为openssl的安装目录
 //
@@ -72,25 +86,25 @@ public:
     // response_body 输出参数，存放响应的HTTP包体
     //
     // 重复调用之前，须先调用reset()清除上一次调用的状态
-    void http_get(std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
-    void proxy_http_get(std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
+    void http_get(std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
+    void proxy_http_get(std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
 
     // HTTP POST请求
     // 重复调用之前，须先调用reset()清除上一次调用的状态
-    void http_post(const std::string& data, std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
-    void http_post(const CHttpPostData* http_post, std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
+    void http_post(const std::string& data, std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
+    void http_post(const CHttpPostData* http_post, std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
 
-    void proxy_http_post(const std::string& data, std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
-    void proxy_http_post(const CHttpPostData* http_post, std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
+    void proxy_http_post(const std::string& data, std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
+    void proxy_http_post(const CHttpPostData* http_post, std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
 
     // GET方式下载文件
     // 注意需要处理CSyscallException异常，如果没有创建和写local_filepath权限，会抛出这个异常。
-    void http_get_download(std::string& response_header, const std::string& local_filepath, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
-    void proxy_http_get_download(std::string& response_header, const std::string& local_filepath, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
+    void http_get_download(std::string& response_header, const std::string& local_filepath, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
+    void proxy_http_get_download(std::string& response_header, const std::string& local_filepath, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
 
     // POST方式下载文件
-    void http_post_download(const std::string& data, std::string& response_header, const std::string& local_filepath, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
-    void proxy_http_post_download(const std::string& data, std::string& response_header, const std::string& local_filepath, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL);
+    void http_post_download(const std::string& data, std::string& response_header, const std::string& local_filepath, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
+    void proxy_http_post_download(const std::string& data, std::string& response_header, const std::string& local_filepath, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure=false, const char* cookie=NULL, const CA* ca=NULL);
 
     std::string escape(const std::string& source);
     std::string unescape(const std::string& source_encoded);
@@ -102,7 +116,7 @@ public:
 
 private:
     // 重置操作
-    void reset(const std::string& url, const char* cookie, bool enable_insecure, size_t (*on_write_response_body_into_FILE_proc)(void*, size_t, size_t, void*));
+    void reset(const std::string& url, const char* cookie, const CA* ca, bool enable_insecure, size_t (*on_write_response_body_into_FILE_proc)(void*, size_t, size_t, void*));
 
 private:
     void* _curl_version_info; // curl_version_info_data
