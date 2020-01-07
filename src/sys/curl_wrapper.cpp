@@ -214,13 +214,13 @@ bool CCurlWrapper::add_request_header(const std::string& name_value_pair)
     }
 }
 
-void CCurlWrapper::http_get(std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::http_get(std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
 
     // 复位初始化
-    reset(url, cookie, enable_insecure, on_write_response_body);
+    reset(url, cookie, ca, enable_insecure, on_write_response_body);
 
     // CURLOPT_HEADERFUNCTION
     errcode = curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response_header);
@@ -243,7 +243,7 @@ void CCurlWrapper::http_get(std::string& response_header, std::string& response_
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 }
 
-void CCurlWrapper::proxy_http_get(std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::proxy_http_get(std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
@@ -258,16 +258,16 @@ void CCurlWrapper::proxy_http_get(std::string& response_header, std::string& res
     if (errcode != CURLE_OK)
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 
-    http_get(response_header, response_body, url, enable_insecure, cookie);
+    http_get(response_header, response_body, url, enable_insecure, cookie, ca);
 }
 
-void CCurlWrapper::http_post(const std::string& data, std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::http_post(const std::string& data, std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
 
     // 复位初始化
-    reset(url, cookie, enable_insecure, on_write_response_body);
+    reset(url, cookie, ca, enable_insecure, on_write_response_body);
 
     // CURLOPT_HEADERFUNCTION
     errcode = curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response_header);
@@ -295,13 +295,13 @@ void CCurlWrapper::http_post(const std::string& data, std::string& response_head
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 }
 
-void CCurlWrapper::http_post(const CHttpPostData* http_post_data, std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::http_post(const CHttpPostData* http_post_data, std::string& response_header, std::string& response_body, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
 
     // 复位初始化
-    reset(url, cookie, enable_insecure, on_write_response_body);
+    reset(url, cookie, ca, enable_insecure, on_write_response_body);
 
     // CURLOPT_HEADERFUNCTION
     errcode = curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response_header);
@@ -323,7 +323,7 @@ void CCurlWrapper::http_post(const CHttpPostData* http_post_data, std::string& r
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 }
 
-void CCurlWrapper::proxy_http_post(const std::string& data, std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::proxy_http_post(const std::string& data, std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
@@ -338,10 +338,10 @@ void CCurlWrapper::proxy_http_post(const std::string& data, std::string& respons
     if (errcode != CURLE_OK)
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 
-    http_post(data, response_header, response_body, url, enable_insecure, cookie);
+    http_post(data, response_header, response_body, url, enable_insecure, cookie, ca);
 }
 
-void CCurlWrapper::proxy_http_post(const CHttpPostData* http_post_data, std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::proxy_http_post(const CHttpPostData* http_post_data, std::string& response_header, std::string& response_body, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
@@ -356,10 +356,10 @@ void CCurlWrapper::proxy_http_post(const CHttpPostData* http_post_data, std::str
     if (errcode != CURLE_OK)
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 
-    http_post(http_post_data, response_header, response_body, url, enable_insecure, cookie);
+    http_post(http_post_data, response_header, response_body, url, enable_insecure, cookie, ca);
 }
 
-void CCurlWrapper::http_get_download(std::string& response_header, const std::string& local_filepath, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::http_get_download(std::string& response_header, const std::string& local_filepath, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
@@ -370,7 +370,7 @@ void CCurlWrapper::http_get_download(std::string& response_header, const std::st
     try
     {
         // 复位初始化
-        reset(url, cookie, enable_insecure, on_write_response_body_into_FILE);
+        reset(url, cookie, ca, enable_insecure, on_write_response_body_into_FILE);
 
         // CURLOPT_HEADERFUNCTION
         errcode = curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response_header);
@@ -409,7 +409,7 @@ void CCurlWrapper::http_get_download(std::string& response_header, const std::st
     }
 }
 
-void CCurlWrapper::proxy_http_get_download(std::string& response_header, const std::string& local_filepath, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::proxy_http_get_download(std::string& response_header, const std::string& local_filepath, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
@@ -424,10 +424,10 @@ void CCurlWrapper::proxy_http_get_download(std::string& response_header, const s
     if (errcode != CURLE_OK)
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 
-    http_get_download(response_header, local_filepath, url, enable_insecure, cookie);
+    http_get_download(response_header, local_filepath, url, enable_insecure, cookie, ca);
 }
 
-void CCurlWrapper::http_post_download(const std::string& data, std::string& response_header, const std::string& local_filepath, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::http_post_download(const std::string& data, std::string& response_header, const std::string& local_filepath, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
@@ -438,7 +438,7 @@ void CCurlWrapper::http_post_download(const std::string& data, std::string& resp
     try
     {
         // 复位初始化
-        reset(url, cookie, enable_insecure, on_write_response_body_into_FILE);
+        reset(url, cookie, ca, enable_insecure, on_write_response_body_into_FILE);
 
         // CURLOPT_HEADERFUNCTION
         errcode = curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response_header);
@@ -482,7 +482,7 @@ void CCurlWrapper::http_post_download(const std::string& data, std::string& resp
     }
 }
 
-void CCurlWrapper::proxy_http_post_download(const std::string& data, std::string& response_header, const std::string& local_filepath, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie)
+void CCurlWrapper::proxy_http_post_download(const std::string& data, std::string& response_header, const std::string& local_filepath, const std::string& proxy_host, uint16_t proxy_port, const std::string& url, bool enable_insecure, const char* cookie, const CA* ca)
 {
     CURLcode errcode;
     CURL* curl = (CURL*)_curl;
@@ -497,7 +497,7 @@ void CCurlWrapper::proxy_http_post_download(const std::string& data, std::string
     if (errcode != CURLE_OK)
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 
-    http_post_download(data, response_header, local_filepath, url, enable_insecure, cookie);
+    http_post_download(data, response_header, local_filepath, url, enable_insecure, cookie, ca);
 }
 
 std::string CCurlWrapper::escape(const std::string& source)
@@ -554,7 +554,7 @@ std::string CCurlWrapper::get_response_content_type() const
     return (content_type!=NULL)? std::string(content_type): std::string("");
 }
 
-void CCurlWrapper::reset(const std::string& url, const char* cookie, bool enable_insecure, size_t (*on_write_response_body_into_FILE_proc)(void*, size_t, size_t, void*))
+void CCurlWrapper::reset(const std::string& url, const char* cookie, const CA* ca, bool enable_insecure, size_t (*on_write_response_body_into_FILE_proc)(void*, size_t, size_t, void*))
 {
     const curl_version_info_data* curl_version_info = (curl_version_info_data*)_curl_version_info;
     CURLcode errcode;
@@ -660,6 +660,66 @@ void CCurlWrapper::reset(const std::string& url, const char* cookie, bool enable
     if (errcode != CURLE_OK)
         THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
 
+    /* 双向验证下面是客户端的ＣＡ*/  
+    if (ca != NULL)
+    {
+        if (!ca->ca_path.empty())
+        {
+            errcode = curl_easy_setopt(curl,CURLOPT_CAPATH,ca->ca_path.c_str());
+            if (errcode != CURLE_OK)
+                THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
+        }
+        
+        if (!ca->ca_info.empty())
+        {
+            errcode = curl_easy_setopt(curl,CURLOPT_CAINFO,ca->ca_info.c_str());
+            if (errcode != CURLE_OK)
+                THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
+        }
+        
+        if (!ca->cert.empty())
+        {
+            errcode = curl_easy_setopt(curl,CURLOPT_SSLCERT,ca->cert.c_str());
+            if (errcode != CURLE_OK)
+                THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
+        }
+        
+        if (!ca->cert_password.empty())
+        {
+            errcode = curl_easy_setopt(curl,CURLOPT_SSLCERTPASSWD,ca->cert_password.c_str());
+            if (errcode != CURLE_OK)
+                THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
+        }
+
+        if (!ca->cert_type.empty())
+        {
+            errcode = curl_easy_setopt(curl,CURLOPT_SSLCERTTYPE,ca->cert_type.c_str());
+            if (errcode != CURLE_OK)
+                THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
+        }
+
+        if (!ca->key.empty())
+        {
+            errcode = curl_easy_setopt(curl,CURLOPT_SSLKEY,ca->key.c_str());
+            if (errcode != CURLE_OK)
+                THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
+        }
+
+        if (!ca->key_password.empty())
+        {
+            errcode = curl_easy_setopt(curl,CURLOPT_SSLKEYPASSWD,ca->key_password.c_str());
+            if (errcode != CURLE_OK)
+                THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
+        }
+
+        if (!ca->key_type.empty())
+        {
+            errcode = curl_easy_setopt(curl,CURLOPT_SSLKEYTYPE,ca->key_type.c_str());
+            if (errcode != CURLE_OK)
+                THROW_EXCEPTION(curl_easy_strerror(errcode), errcode);
+        }
+    }
+    
     // CURLOPT_CONNECTTIMEOUT
     // In unix-like systems, this might cause signals to be used unless CURLOPT_NOSIGNAL is set.
     errcode = curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, _connect_timeout_seconds);
